@@ -8,8 +8,16 @@ module Laddro
       @code = code
     end
 
-    def auth_error? = status == 401
-    def usage_limit_error? = status == 402
-    def not_found? = status == 404
+    def auth_error?
+      status == 401
+    end
+
+    def usage_limit_error?
+      status == 402
+    end
+
+    def not_found?
+      status == 404
+    end
   end
 end
