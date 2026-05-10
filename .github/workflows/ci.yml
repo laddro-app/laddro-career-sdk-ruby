@@ -14,6 +14,5 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
-          bundler-cache: true
 
-      - run: ruby -e "require_relative 'lib/laddro_career'; puts 'OK'"
+      - run: ruby -e "require_relative 'lib/laddro'; puts 'OK'"
