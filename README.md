@@ -46,10 +46,10 @@ client.update_ai_settings(
 
 ## Links
 
-- [Laddro](https://laddro.com) — AI-powered career tools
-- [API Reference](https://api.laddro.com/reference) — Interactive docs
-- [Documentation](https://docs.laddro.com) — Guides and tutorials
-- [GitHub](https://github.com/laddro-app) — All SDKs and tools
+- [laddro.com](https://laddro.com)
+- [API Reference](https://api.laddro.com/reference)
+- [Docs](https://docs.laddro.com)
+- [GitHub](https://github.com/laddro-app)
 
 ## License
 
