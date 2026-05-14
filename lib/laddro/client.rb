@@ -47,6 +47,10 @@ module Laddro
       post_binary("/v1/tailor", request)
     end
 
+    def tailor_detailed(request)
+      post_binary_detailed("/v1/tailor", request)
+    end
+
     def export_pdf(request)
       post_binary("/v1/export", request)
     end
@@ -65,6 +69,10 @@ module Laddro
 
     def generate_cover_letter(request)
       post_binary("/v1/cover-letters/generate", request)
+    end
+
+    def generate_cover_letter_detailed(request)
+      post_binary_detailed("/v1/cover-letters/generate", request)
     end
 
     def render_cover_letter(id, options)
@@ -105,6 +113,10 @@ module Laddro
       request_binary(:post, path, body)
     end
 
+    def post_binary_detailed(path, body)
+      request_binary_detailed(:post, path, body)
+    end
+
     def put_binary(path, body)
       request_binary(:put, path, body)
     end
@@ -116,9 +128,16 @@ module Laddro
     end
 
     def request_binary(method, path, body = nil)
+      request_binary_detailed(method, path, body)[:data]
+    end
+
+    def request_binary_detailed(method, path, body = nil)
       response = execute(method, path, body)
       handle_error(response) unless response.is_a?(Net::HTTPSuccess)
-      response.body
+      {
+        data: response.body,
+        metadata: artifact_metadata(response)
+      }
     end
 
     def execute(method, path, body)
@@ -148,6 +167,28 @@ module Laddro
       message = body["error"] || response.message
       code = body["code"]
       raise APIError.new(message, response.code.to_i, code)
+    end
+
+    def artifact_metadata(response)
+      {
+        resume_id: response["x-resume-id"],
+        cover_letter_id: response["x-cover-letter-id"],
+        filename: content_disposition_filename(response["content-disposition"]),
+        mime_type: response["content-type"]&.split(";")&.first
+      }
+    end
+
+    def content_disposition_filename(value)
+      return nil unless value
+
+      value.split(";").each do |part|
+        key, filename = part.strip.split("=", 2)
+        next unless key&.downcase&.start_with?("filename")
+
+        filename = filename.to_s.delete_prefix("UTF-8''").delete_prefix('"').delete_suffix('"')
+        return URI.decode_www_form_component(filename)
+      end
+      nil
     end
   end
 end
